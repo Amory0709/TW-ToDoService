@@ -16,11 +16,13 @@ export class TodoitemDetailComponent implements OnInit {
   constructor(
     public todoService: TodoService,
     private activeRouter: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = this.activeRouter.snapshot.paramMap.get('id');
     console.log(id);
-    this.todoItem = this.todoService.findById(Number(id));
+    this.todoService.findById(Number(id)).subscribe(
+      res => { this.todoItem = res }
+    );
   }
 }

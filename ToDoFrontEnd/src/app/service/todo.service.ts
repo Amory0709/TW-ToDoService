@@ -1,7 +1,9 @@
+import { ToDoItem } from './../model/ToDoItem';
 import { TodoApiService } from './todo.api.service';
 import { Injectable } from '@angular/core';
-import { ToDoItem } from '../model/ToDoItem';
 import { TodoStoreService } from './todo-store.service';
+import { HttpResponse } from '@angular/common/http';
+import { catchError, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +16,7 @@ export class TodoService {
   constructor(
     private todoStore: TodoStoreService,
     private todoApiService: TodoApiService
-  ) {}
+  ) { }
 
   public get todoItems(): Array<ToDoItem> {
     return this.todoStore.getAll();
@@ -22,7 +24,7 @@ export class TodoService {
 
   public create(todoItem: ToDoItem): void {
     this.todoApiService.create(todoItem).subscribe({
-      next: (response) => {},
+      next: (response) => { },
       error: (error) => {
         this.errorMessage = error.errorMessage;
       },
@@ -34,7 +36,12 @@ export class TodoService {
   }
 
   public delete(id: number): void {
-    this.todoStore.delete(id);
+    this.todoApiService.delete(id).subscribe({
+      next: (response) => { },
+      error: (error) => {
+        this.errorMessage = error.errorMessage;
+      },
+    });
   }
 
   public selectTodoItem(id: number): void {
@@ -49,8 +56,14 @@ export class TodoService {
     return this._selectedTodoItem;
   }
 
-  public findById(id: number): ToDoItem {
-    return this.todoStore.findById(id);
+  public findById(id: number): Observable<any> {
+    return this.todoApiService.getById(id).pipe(
+      // tap(res => console.log(res)),
+      catchError(err => {
+        this.errorMessage = err.errorMessage
+        return err
+      })
+    )
   }
 
   public currentUpdatingTodoItem(): ToDoItem {

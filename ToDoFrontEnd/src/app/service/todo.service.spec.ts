@@ -13,7 +13,7 @@ describe('TodoService', () => {
 
   beforeEach(() => {
     todoStoreService = new TodoStoreService();
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['post', 'get']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['post', 'get', 'delete']);
     TestBed.configureTestingModule({
       providers: [
         TodoApiService,
@@ -55,7 +55,7 @@ describe('TodoService', () => {
   it('should get todo item detail via mockHttp get', () => {
     // given
     const todoItem = new ToDoItem(1, '11', '111', false);
-    httpClientSpy.post.and.returnValue(of({}));
+    httpClientSpy.get.and.returnValue(of({}));
     // when
     service.findById(todoItem.id);
     // then
@@ -64,15 +64,28 @@ describe('TodoService', () => {
     );
   });
 
-  it('should response error when get todo detail', () => {
+  it('should get todo item detail via mockHttp get', () => {
     // given
     const todoItem = new ToDoItem(1, '11', '111', false);
-    httpClientSpy.get.and.returnValue(
-      throwError(() => ({ errorMessage: 'get failed' }))
+    httpClientSpy.delete.and.returnValue(of({}));
+    // when
+    service.delete(todoItem.id);
+    // then
+    expect(httpClientSpy.delete).toHaveBeenCalledWith(
+      `https://localhost:5001/todos/${todoItem.id}`,
+    );
+  });
+
+  it('should response error when create ', () => {
+    // given
+    const todoItem = new ToDoItem(1, '11', '111', false);
+    httpClientSpy.delete.and.returnValue(
+      throwError(() => ({ errorMessage: 'delete failed' }))
     );
     // when
-    service.findById(todoItem.id);
+    service.delete(todoItem.id);
     // then
-    expect(service.errorMessage).toEqual('get failed');
+    expect(service.errorMessage).toEqual('delete failed');
   });
+
 });

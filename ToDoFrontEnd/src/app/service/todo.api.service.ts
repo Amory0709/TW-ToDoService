@@ -16,8 +16,14 @@ export class TodoApiService {
     );
   }
 
-  getById(id: number): Observable<any> {
-    return this.httpClient.get(
+  getById(id: number): Observable<ToDoItem> {
+    return this.httpClient.get<ToDoItem>(
+      `https://localhost:5001/todos/${id}`
+    );
+  }
+
+  delete(id: number): Observable<any> {
+    return this.httpClient.delete(
       `https://localhost:5001/todos/${id}`
     );
   }
