@@ -15,4 +15,10 @@ export class TodoApiService {
       todoItem
     );
   }
+
+  getById(id: number): Observable<any> {
+    return this.httpClient.get(
+      `https://localhost:5001/todos/${id}`
+    );
+  }
 }
